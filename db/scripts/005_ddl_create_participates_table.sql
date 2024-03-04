@@ -1,7 +1,6 @@
 CREATE TABLE participates (
    id SERIAL PRIMARY KEY,
-   before BIGINT not null,
-   after BIGINT not null,
-   created TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
-   auto_post_id int references auto_post(id)
+   post_id INT NOT NULL REFERENCES auto_post(id),
+   user_id INT NOT NULL REFERENCES auto_user(id),
+   UNIQUE (post_id, user_id)
 );
