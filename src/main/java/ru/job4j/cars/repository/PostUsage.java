@@ -4,11 +4,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import ru.job4j.cars.model.Post;
-import ru.job4j.cars.model.PriceHistory;
-import ru.job4j.cars.model.User;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class PostUsage {
@@ -17,28 +13,11 @@ public class PostUsage {
                 .configure().build();
         try (SessionFactory sf = new MetadataSources(registry)
                 .buildMetadata().buildSessionFactory()) {
-            var user = new User();
-            user.setLogin("admin");
-            user.setPassword("admin");
-            create(user, sf);
-
-            var now = LocalDateTime.now();
-            var post = new Post();
-            post.setDescription("Post1");
-            post.setCreated(now);
-            post.setUser(user);
-            post.setPrices(List.of(
-                    new PriceHistory(0, 100, 200, now),
-                    new PriceHistory(0, 200, 300, now.plusDays(1)),
-                    new PriceHistory(0, 300, 400, now.plusDays(2))
-            ));
-            create(post, sf);
-
-            var stored = sf.openSession()
-                    .createQuery("from Post where id = :fId", Post.class)
-                    .setParameter("fId", post.getId())
-                    .getSingleResult();
-            stored.getPrices().forEach(System.out::println);
+            var crudRepository = new CrudRepository(sf);
+            var postRepository = new PostRepository(crudRepository);
+            postRepository.findByBrand("BMW").forEach(post -> System.out.println(post.getDescription()));
+            postRepository.findForLastDay().forEach(post -> System.out.println(post.getDescription()));
+            postRepository.findWithPhoto().forEach(post -> System.out.println(post.getDescription()));
         } finally {
             StandardServiceRegistryBuilder.destroy(registry);
         }
