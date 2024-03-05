@@ -4,11 +4,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import ru.job4j.cars.model.Car;
-import ru.job4j.cars.model.Engine;
-import ru.job4j.cars.model.Owner;
-import ru.job4j.cars.model.User;
+import ru.job4j.cars.model.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public class CarUsage {
@@ -38,10 +36,18 @@ public class CarUsage {
             owner.setUser(user);
             ownerRepository.save(owner);
 
+            var history = new History();
+            history.setStartAt(LocalDateTime.of(2024, 1, 1, 0, 0, 0));
+            history.setEndAt(LocalDateTime.of(2024, 2, 29, 23, 59, 59));
+
+            var historyOwner = new HistoryOwner();
+            historyOwner.setOwner(owner);
+            historyOwner.setHistory(history);
+
             var car = new Car();
             car.setName("Mercedes E200");
             car.setEngine(engine);
-            car.setOwners(Set.of(owner));
+            car.setOwners(Set.of(historyOwner));
             carRepository.save(car);
 
             var cars = carRepository.findAll();
