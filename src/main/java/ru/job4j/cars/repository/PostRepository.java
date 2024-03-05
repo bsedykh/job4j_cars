@@ -3,6 +3,7 @@ package ru.job4j.cars.repository;
 import lombok.AllArgsConstructor;
 import ru.job4j.cars.model.Post;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -14,19 +15,10 @@ public class PostRepository {
         return crudRepository.query(
                 """
                         FROM Post p
-                        WHERE (
-                                EXTRACT(YEAR FROM p.created),
-                                EXTRACT(MONTH FROM p.created),
-                                EXTRACT(DAY FROM p.created)
-                            ) IN (
-                                SELECT
-                                    EXTRACT(YEAR FROM MAX(p.created)),
-                                    EXTRACT(MONTH FROM MAX(p.created)),
-                                    EXTRACT(DAY FROM MAX(p.created))
-                                FROM Post p
-                            )
+                        WHERE p.created > :startDate
                         """,
-                Post.class
+                Post.class,
+                Map.of("startDate", LocalDateTime.now().minusDays(1))
         );
     }
 
