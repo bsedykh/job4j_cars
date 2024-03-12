@@ -36,13 +36,10 @@ public class CarUsage {
             owner.setUser(user);
             ownerRepository.save(owner);
 
-            var history = new History();
-            history.setStartAt(LocalDateTime.of(2024, 1, 1, 0, 0, 0));
-            history.setEndAt(LocalDateTime.of(2024, 2, 29, 23, 59, 59));
-
             var historyOwner = new HistoryOwner();
             historyOwner.setOwner(owner);
-            historyOwner.setHistory(history);
+            historyOwner.setStartAt(LocalDateTime.of(2024, 1, 1, 0, 0, 0));
+            historyOwner.setEndAt(LocalDateTime.of(2024, 2, 29, 23, 59, 59));
 
             var car = new Car();
             car.setName("Mercedes E200");

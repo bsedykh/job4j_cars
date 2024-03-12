@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "history_owners")
@@ -19,7 +20,9 @@ public class HistoryOwner {
     @JoinColumn(name = "owner_id")
     private Owner owner;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "history_id")
-    private History history;
+    @Column(name = "start_at")
+    private LocalDateTime startAt;
+
+    @Column(name = "end_at")
+    private LocalDateTime endAt;
 }
