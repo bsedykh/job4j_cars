@@ -1,20 +1,21 @@
-package ru.job4j.cars.repository;
+package ru.job4j.cars.repository.car;
 
 import lombok.AllArgsConstructor;
 import ru.job4j.cars.model.Car;
+import ru.job4j.cars.repository.CrudRepository;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @AllArgsConstructor
-public class CarRepository {
+public class HibernateCarRepository implements CarRepository {
     private final CrudRepository crudRepository;
 
     public List<Car> findAll() {
         return crudRepository.query("""
                         FROM Car c
-                            JOIN FETCH c.owners
+                            LEFT JOIN FETCH c.owners
                         """, Car.class)
                 .stream().distinct().toList();
     }
@@ -22,7 +23,7 @@ public class CarRepository {
     public Optional<Car> findById(int id) {
         return crudRepository.optional("""
                 FROM Car c
-                    JOIN FETCH c.owners
+                    LEFT JOIN FETCH c.owners
                 WHERE c.id = :id
                 """, Car.class, Map.of("id", id));
     }

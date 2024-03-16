@@ -1,0 +1,2 @@
+ALTER TABLE auto_post ADD COLUMN price INT;
+ALTER TABLE auto_post ADD COLUMN closed BOOLEAN;

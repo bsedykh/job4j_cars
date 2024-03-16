@@ -1,14 +1,15 @@
-package ru.job4j.cars.repository;
+package ru.job4j.cars.repository.engine;
 
 import lombok.AllArgsConstructor;
 import ru.job4j.cars.model.Engine;
+import ru.job4j.cars.repository.CrudRepository;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @AllArgsConstructor
-public class EngineRepository {
+public class HibernateEngineRepository {
     private final CrudRepository crudRepository;
 
     public List<Engine> findAll() {

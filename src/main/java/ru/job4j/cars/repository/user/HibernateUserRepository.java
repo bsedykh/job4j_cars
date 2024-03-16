@@ -1,4 +1,4 @@
-package ru.job4j.cars.repository;
+package ru.job4j.cars.repository.user;
 
 import lombok.AllArgsConstructor;
 import org.hibernate.Session;
@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 @AllArgsConstructor
-public class UserRepository {
+public class HibernateUserRepository implements UserRepository {
     private final SessionFactory sf;
 
     /**
@@ -122,6 +122,18 @@ public class UserRepository {
             var query = session.createQuery(
                     "from User u WHERE u.login = :login", User.class);
             query.setParameter("login", login);
+            return query.uniqueResultOptional();
+        }
+    }
+
+    public Optional<User> findByLoginAndPassword(String login, String password) {
+        try (var session = sf.openSession()) {
+            var query = session.createQuery(
+                    "FROM User u WHERE u.login = :login AND u.password = :password",
+                    User.class
+            );
+            query.setParameter("login", login);
+            query.setParameter("password", password);
             return query.uniqueResultOptional();
         }
     }

@@ -6,9 +6,34 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
+@NamedEntityGraph(
+        name = "post",
+        attributeNodes = {
+                @NamedAttributeNode("user"),
+                @NamedAttributeNode(value = "car", subgraph = "post.car"),
+                @NamedAttributeNode("files")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "post.car",
+                        attributeNodes = {
+                                @NamedAttributeNode("category"),
+                                @NamedAttributeNode(value = "model", subgraph = "post.car.model"),
+                                @NamedAttributeNode("body"),
+                                @NamedAttributeNode("engine")
+                        }
+                ),
+                @NamedSubgraph(
+                        name = "post.car.model",
+                        attributeNodes = @NamedAttributeNode("brand")
+                )
+        }
+)
 @Table(name = "auto_post")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -26,23 +51,24 @@ public class Post {
     @JoinColumn(name = "auto_user_id")
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "auto_post_id")
-    private List<PriceHistory> prices = new ArrayList<>();
-
     @ManyToMany
     @JoinTable(
             name = "participates",
             joinColumns = { @JoinColumn(name = "post_id") },
             inverseJoinColumns = { @JoinColumn(name = "user_id") }
     )
-    private List<User> participates = new ArrayList<>();
+    private Set<User> participates = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "car_id")
     private Car car;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
+    @ElementCollection
+    @CollectionTable(name = "files")
+    @OrderColumn
     private List<File> files = new ArrayList<>();
+
+    private int price;
+
+    private boolean closed;
 }

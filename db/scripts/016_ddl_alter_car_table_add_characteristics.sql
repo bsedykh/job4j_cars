@@ -1,0 +1,5 @@
+ALTER TABLE car ADD COLUMN category_id INT REFERENCES categories(id);
+ALTER TABLE car ADD COLUMN model_id INT REFERENCES models(id);
+ALTER TABLE car ADD COLUMN body_id INT REFERENCES bodies(id);
+ALTER TABLE car ADD COLUMN of_year INT;
+ALTER TABLE car ADD COLUMN mileage INT;

@@ -1,2 +1,0 @@
-ALTER TABLE car
-ADD COLUMN brand TEXT;

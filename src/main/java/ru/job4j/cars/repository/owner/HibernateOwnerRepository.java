@@ -1,14 +1,15 @@
-package ru.job4j.cars.repository;
+package ru.job4j.cars.repository.owner;
 
 import lombok.AllArgsConstructor;
 import ru.job4j.cars.model.Owner;
+import ru.job4j.cars.repository.CrudRepository;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @AllArgsConstructor
-public class OwnerRepository {
+public class HibernateOwnerRepository {
     private final CrudRepository crudRepository;
 
     public List<Owner> findAll() {
