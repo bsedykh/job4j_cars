@@ -17,6 +17,8 @@ public interface PostRepository {
 
     List<Post> findByBrand(Brand brand);
 
+    List<Post> findNew();
+
     Post save(Post post);
 
     void update(Post post);

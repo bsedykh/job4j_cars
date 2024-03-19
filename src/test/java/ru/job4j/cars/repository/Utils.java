@@ -1,22 +1,11 @@
 package ru.job4j.cars.repository;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import ru.job4j.cars.configuration.HibernateConfiguration;
 
 public class Utils {
     public static SessionFactory createSessionFactory() {
-        var registry = new StandardServiceRegistryBuilder()
-                .configure()
-                .build();
-        try {
-            return new MetadataSources(registry)
-                    .buildMetadata()
-                    .buildSessionFactory();
-        } catch (Exception e) {
-            StandardServiceRegistryBuilder.destroy(registry);
-            throw e;
-        }
+        return new HibernateConfiguration().sf();
     }
 
     public static void closeSessionFactory(SessionFactory sessionFactory) {

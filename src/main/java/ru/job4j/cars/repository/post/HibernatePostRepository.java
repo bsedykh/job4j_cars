@@ -1,6 +1,7 @@
 package ru.job4j.cars.repository.post;
 
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Repository;
 import ru.job4j.cars.model.Brand;
 import ru.job4j.cars.model.Post;
 import ru.job4j.cars.repository.CrudRepository;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Repository
 @AllArgsConstructor
 public class HibernatePostRepository implements PostRepository {
     private final CrudRepository crudRepository;
@@ -21,7 +23,8 @@ public class HibernatePostRepository implements PostRepository {
                         WHERE p.created > :startDate
                         """,
                 Post.class,
-                Map.of("startDate", LocalDateTime.now().minusDays(1))
+                Map.of("startDate", LocalDateTime.now().minusDays(1)),
+                "post"
         );
     }
 
@@ -31,7 +34,8 @@ public class HibernatePostRepository implements PostRepository {
                         SELECT p FROM Post p
                         JOIN p.files f
                         """,
-                Post.class
+                Post.class,
+                "post"
         );
     }
 
@@ -44,7 +48,20 @@ public class HibernatePostRepository implements PostRepository {
                         WHERE m.brand = :brand
                         """,
                 Post.class,
-                Map.of("brand", brand)
+                Map.of("brand", brand),
+                "post"
+        );
+    }
+
+    @Override
+    public List<Post> findNew() {
+        return crudRepository.query(
+                """
+                        SELECT p FROM Post p
+                        WHERE p.closed = FALSE
+                        """,
+                Post.class,
+                "post"
         );
     }
 
@@ -54,7 +71,8 @@ public class HibernatePostRepository implements PostRepository {
                 """
                         SELECT p FROM Post p
                         """,
-                Post.class
+                Post.class,
+                "post"
         );
     }
 
@@ -66,7 +84,8 @@ public class HibernatePostRepository implements PostRepository {
                         WHERE p.id = :id
                         """,
                 Post.class,
-                Map.of("id", id)
+                Map.of("id", id),
+                "post"
         );
     }
 

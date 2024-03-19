@@ -9,6 +9,7 @@ import ru.job4j.cars.repository.Utils;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,13 +26,14 @@ class HibernatePostRepositoryTest {
      * </ul>
      */
     private List<Car> cars;
+    private Set<File> files;
 
     private final LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
     @BeforeAll
     public static void initRepository() {
         sessionFactory = Utils.createSessionFactory();
-        crudRepository = new CrudRepository(sessionFactory, "post");
+        crudRepository = new CrudRepository(sessionFactory);
         postRepository = new HibernatePostRepository(crudRepository);
     }
 
@@ -76,6 +78,14 @@ class HibernatePostRepositoryTest {
 
             return List.of(car1, car2);
         });
+
+        files = crudRepository.tx(session -> {
+            var file1 = new File(0, "file1.txt", "files/file1.txt");
+            var file2 = new File(0, "file2.txt", "files/file2.txt");
+            session.persist(file1);
+            session.persist(file2);
+            return Set.of(file1, file2);
+        });
     }
 
     @AfterEach
@@ -84,6 +94,7 @@ class HibernatePostRepositoryTest {
             postRepository.delete(post);
         }
         crudRepository.run(session -> cars.forEach(session::remove));
+        crudRepository.run(session -> files.forEach(session::remove));
     }
 
     @Test
@@ -135,6 +146,17 @@ class HibernatePostRepositoryTest {
     }
 
     @Test
+    public void whenSaveSeveralThenFindNew() {
+        var post1 = savePost("Post1");
+        var post2 = savePost("Post2");
+        var post3 = savePost("Post3");
+        post3.setClosed(true);
+        postRepository.update(post3);
+        var result = postRepository.findNew();
+        assertThat(result).containsExactlyInAnyOrder(post1, post2);
+    }
+
+    @Test
     public void whenNoPostsThenNothingFound() {
         assertThat(postRepository.findAll()).isEmpty();
         assertThat(postRepository.findById(1)).isEmpty();
@@ -173,13 +195,7 @@ class HibernatePostRepositoryTest {
         post.setCar(car);
         post.setPrice(100);
         if (createFiles) {
-            var file1 = new File();
-            file1.setName("file1.txt");
-            file1.setPath("files/file1.txt");
-            var file2 = new File();
-            file2.setName("file2.txt");
-            file2.setPath("files/file2.txt");
-            post.setFiles(List.of(file1, file2));
+            post.setFiles(files);
         }
         postRepository.save(post);
         return post;

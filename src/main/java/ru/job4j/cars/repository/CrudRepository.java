@@ -1,11 +1,13 @@
 package ru.job4j.cars.repository;
 
+import lombok.AllArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,19 +15,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Component
+@AllArgsConstructor
 public class CrudRepository {
     private final SessionFactory sf;
-
-    private final String entityGraph;
-
-    public CrudRepository(SessionFactory sf) {
-        this(sf, null);
-    }
-
-    public CrudRepository(SessionFactory sf, String entityGraph) {
-        this.sf = sf;
-        this.entityGraph = entityGraph;
-    }
 
     public void run(Consumer<Session> command) {
         tx(session -> {
@@ -47,9 +39,14 @@ public class CrudRepository {
     }
 
     public <T> Optional<T> optional(String query, Class<T> cl, Map<String, Object> args) {
+        return optional(query, cl, args, null);
+    }
+
+    public <T> Optional<T> optional(String query, Class<T> cl, Map<String, Object> args,
+                                    String entityGraph) {
         Function<Session, Optional<T>> command = session -> {
             var sq = session.createQuery(query, cl);
-            setEntityGraph(session, sq);
+            setEntityGraph(session, sq, entityGraph);
             for (Map.Entry<String, Object> arg : args.entrySet()) {
                 sq.setParameter(arg.getKey(), arg.getValue());
             }
@@ -59,18 +56,21 @@ public class CrudRepository {
     }
 
     public <T> List<T> query(String query, Class<T> cl) {
-        Function<Session, List<T>> command = session -> {
-            var sq = session.createQuery(query, cl);
-            setEntityGraph(session, sq);
-            return sq.list();
-        };
-        return tx(command);
+        return query(query, cl, new HashMap<>(), null);
+    }
+    public <T> List<T> query(String query, Class<T> cl, String entityGraph) {
+        return query(query, cl, new HashMap<>(), entityGraph);
     }
 
     public <T> List<T> query(String query, Class<T> cl, Map<String, Object> args) {
+        return query(query, cl, args, null);
+    }
+
+    public <T> List<T> query(String query, Class<T> cl, Map<String, Object> args,
+                             String entityGraph) {
         Function<Session, List<T>> command = session -> {
             var sq = session.createQuery(query, cl);
-            setEntityGraph(session, sq);
+            setEntityGraph(session, sq, entityGraph);
             for (Map.Entry<String, Object> arg : args.entrySet()) {
                 sq.setParameter(arg.getKey(), arg.getValue());
             }
@@ -96,7 +96,7 @@ public class CrudRepository {
         }
     }
 
-    private void setEntityGraph(Session session, Query<?> sq) {
+    private void setEntityGraph(Session session, Query<?> sq, String entityGraph) {
         if (entityGraph != null) {
             sq.setHint("javax.persistence.fetchgraph",
                     session.getEntityGraph(entityGraph));

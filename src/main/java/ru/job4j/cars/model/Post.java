@@ -5,9 +5,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -63,10 +61,13 @@ public class Post {
     @JoinColumn(name = "car_id")
     private Car car;
 
-    @ElementCollection
-    @CollectionTable(name = "files")
-    @OrderColumn
-    private List<File> files = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "post_files",
+            joinColumns = { @JoinColumn(name = "post_id") },
+            inverseJoinColumns = { @JoinColumn(name = "file_id") }
+    )
+    private Set<File> files = new HashSet<>();
 
     private int price;
 

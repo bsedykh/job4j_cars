@@ -1,6 +1,7 @@
 package ru.job4j.cars.repository.model;
 
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Repository;
 import ru.job4j.cars.model.Model;
 import ru.job4j.cars.repository.CrudRepository;
 
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Repository
 @AllArgsConstructor
 public class HibernateModelRepository implements ModelRepository {
     private final CrudRepository crudRepository;

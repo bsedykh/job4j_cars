@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link th:href = "@{/css/bootstrap.min.css}" rel="stylesheet">
+    <script th:src="@{/js/code.jquery.com_jquery-3.7.0.min.js}"></script>
+    <script th:src="@{/js/popper.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+
+    <title>Добавить объявление</title>
+</head>
+<body>
+<div class="container-fluid p-0">
+    <header th:insert="blocks/header :: header"></header>
+    <div class="container">
+        <form class="mt-3" th:action="@{/posts/create}" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="category"><b>Категория</b></label>
+                <select class="form-control" id="category" name="categoryId" required>
+                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="model"><b>Модель</b></label>
+                <select class="form-control" id="model" name="modelId" required>
+                    <option th:each="model : ${models}" th:value="${model.id}" th:text="${model.brand.name + ' ' + model.name}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="body"><b>Кузов</b></label>
+                <select class="form-control" id="body" name="bodyId" required>
+                    <option th:each="body : ${bodies}" th:value="${body.id}" th:text="${body.name}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="engine"><b>Двигатель</b></label>
+                <select class="form-control" id="engine" name="engineId" required>
+                    <option th:each="engine : ${engines}" th:value="${engine.id}" th:text="${engine.name}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="year" class="form-label"><b>Год выпуска</b></label>
+                <input type="number" min="1900" max="3999" class="form-control" id="year" name="year" required>
+            </div>
+            <div class="mb-3">
+                <label for="mileage" class="form-label"><b>Пробег, км</b></label>
+                <input type="number" min="0" class="form-control" id="mileage" name="mileage" required>
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label"><b>Цена</b></label>
+                <input type="number" min="0" class="form-control" id="price" name="price" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label"><b>Описание</b></label>
+                <textarea class="form-control" id="description" name="description" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="formFile"><b>Фото</b></label>
+                <input class="form-control form-control-sm w-100" type="file" id="formFile" name="file" required>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-6"></div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-6"><a class="btn btn-danger w-100" th:href="@{/posts/list}">Отмена</a></div>
+                        <div class="col-6"><button class="btn btn-primary w-100" type="submit">Сохранить</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <footer th:insert="blocks/footer :: footer"></footer>
+</div>
+</body>
+</html>

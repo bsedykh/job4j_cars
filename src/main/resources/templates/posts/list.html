@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link th:href = "@{/css/bootstrap.min.css}" rel="stylesheet">
+    <script th:src="@{/js/code.jquery.com_jquery-3.7.0.min.js}"></script>
+    <script th:src="@{/js/popper.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+
+    <title>Продажа автомобилей</title>
+</head>
+<body>
+<div class="container-fluid p-0">
+    <header th:insert="blocks/header :: header"></header>
+    <div class="container">
+        <div class="mt-3 mb-3">
+            <a class="btn btn-success w-15" th:href="@{/posts/create}">Добавить объявление</a>
+        </div>
+        <div class="row mb-3">
+            <div class="col-auto"><a th:href="@{/posts/list}">Все</a></div>
+            <div class="col-auto"><a th:href="@{/posts/list/new}">Только новые</a></div>
+            <div class="col-auto"><a th:href="@{/posts/list/last-day}">За последний день</a></div>
+        </div>
+        <div class="row">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Фото</th>
+                    <th scope="col">Марка</th>
+                    <th scope="col">Модель</th>
+                    <th scope="col">Категория</th>
+                    <th scope="col">Год выпуска</th>
+                    <th scope="col">Пробег, км</th>
+                    <th scope="col">Цена, руб</th>
+                    <th scope="col">Дата объявления</th>
+                    <th scope="col">Автор</th>
+                    <th scope="col">Статус</th>
+                    <th scope="col">Подробнее</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="post: ${posts}">
+                    <td><img th:width="300" th:src="@{/files/{fileId}(fileId=${post.files[0].id})}" alt="Нет фото"></td>
+                    <td th:text="${post.car.model.brand.name}"/>
+                    <td th:text="${post.car.model.name}"/>
+                    <td th:text="${post.car.category.name}"/>
+                    <td th:text="${post.car.year}"/>
+                    <td th:text="${post.car.mileage}"/>
+                    <td th:text="${post.price}"/>
+                    <td th:text="${#temporals.format(post.created, 'dd MMMM yyyy')}"/>
+                    <td th:text="${post.user.login}"/>
+                    <td th:text="${post.closed ? 'Продано' : 'Новое'}"/>
+                    <td>
+                        <a th:href="@{/posts/one/{postId}(postId=${post.id})}">
+                            <span class="badge rounded-pill bg-light text-dark">>>></span>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <footer th:insert="blocks/footer :: footer"></footer>
+</div>
+</body>
+</html>
